@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Información del Tiempo</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="tiempo.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Información del Tiempo</h1>
+    <div class="weather-info"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const provinces = [
+        { provincia: 'Cantabria', codigo_provincia: '39', municipio: 'Ribamontán al mar', codigo_municipio: '39061' },
+        { provincia: 'Almería', codigo_provincia: '04', municipio: 'Zurgena', codigo_municipio: '04103' },
+        { provincia: 'Madrid', codigo_provincia: '28', municipio: 'Madrid', codigo_municipio: '28079' },
+        { provincia: 'Segovia', codigo_provincia: '40', municipio: 'Aguilafuente', codigo_municipio: '40004' },
+        { provincia: 'Jaén', codigo_provincia: '23', municipio: 'Aldeaquemada', codigo_municipio: '23004' },
+        { provincia: 'Santa Cruz de Tenerife', codigo_provincia: '38', municipio: 'Fuentecaliente de la Palma', codigo_municipio: '38014' }
+      ];
+
+      const weatherInfo = document.querySelector('.weather-info');
+
+      provinces.forEach(province => {
+        fetch(`https://www.el-tiempo.net/api/json/v2/provincias/${province.codigo_provincia}/municipios/${province.codigo_municipio}`)
+          .then(response => response.json())
+          .then(data => {
+            const cityInfo = document.createElement('div');
+            cityInfo.classList.add('city-info', 'mt-4');
+            cityInfo.innerHTML = `
+              <h2>${province.provincia}</h2>
+              <div class="city-details">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <td><strong>Temperatura:</strong></td>
+                      <td>${data.temperatura_actual}°C</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Humedad:</strong></td>
+                      <td>${data.humedad} %</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Viento:</strong></td>
+                      <td>${data.viento} km/h</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            `;
+            weatherInfo.appendChild(cityInfo);
+          })
+          .catch(error => {
+            console.error(`Error al obtener los datos del tiempo para ${province.provincia}:`, error);
+          });
+      });
+    });
+  </script>
+</body>
+</html>
+
